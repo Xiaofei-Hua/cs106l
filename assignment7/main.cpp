@@ -8,6 +8,8 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include <ranges>
+#include <algorithm>
 
 #include "unique_ptr.h"
 
@@ -52,7 +54,15 @@ template <typename T> struct ListNode {
  */
 template <typename T> cs106l::unique_ptr<ListNode<T>> create_list(const std::vector<T>& values) {
   /* STUDENT TODO: Implement this method */
-  throw std::runtime_error("Not implemented: createList");
+  // throw std::runtime_error("Not implemented: createList");
+
+  cs106l::unique_ptr<ListNode<T>> head = nullptr;
+  std::ranges::for_each(std::ranges::views::reverse(values), [&head](const auto &it) {
+    auto cur = cs106l::make_unique<ListNode<T>>(it);
+    cur->next = std::move(head);
+    head = std::move(cur);
+  });
+  return head;
 }
 
 /**

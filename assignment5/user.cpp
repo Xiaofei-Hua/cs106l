@@ -1,4 +1,5 @@
 #include "user.h"
+#include <cstddef>
 
 /**
  * Creates a new User with the given name and no friends.
@@ -63,3 +64,50 @@ void User::set_friend(size_t index, const std::string& name)
  * STUDENT TODO:
  * The definitions for your custom operators and special member functions will go here!
  */
+
+std::ostream &operator<<(std::ostream &os, const User &user) {
+    os << "User(name=" << user._name << ", friends=[";
+    for (size_t i = 0; i < user._size; i++) {
+      if (i) {
+        os << ", ";
+      }
+      os << user._friends[i];
+    }
+    os << "])";
+    return os;
+}
+
+User::~User() {
+  delete []_friends;
+}
+
+User::User(const User &user) : _name{user._name}, _size{user._size}, _capacity{user._capacity} {
+  _friends = new std::string[_capacity];
+  for (int i = 0; i < _size; i++) {
+    _friends[i] = user._friends[i];
+  }
+}
+
+User &User::operator=(const User &user) {
+  if (this == &user) {
+    return *this;
+  }
+  _name = user._name;
+  _size = user._size;
+  _capacity = user._capacity;
+  delete []_friends;
+  _friends = new std::string[_capacity];
+  for (int i = 0; i < _size; i++) {
+    _friends[i] = user._friends[i];
+  }
+  return *this;
+}
+
+User& User::operator+=(User &user) {
+  this->add_friend(user._name);
+  user.add_friend(this->_name);
+  return *this;
+}
+bool User::operator<(const User &user) const {
+  return _name < user._name;
+}

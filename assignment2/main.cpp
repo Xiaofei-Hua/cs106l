@@ -7,6 +7,7 @@
  *
  */
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <queue>
@@ -14,7 +15,7 @@
 #include <string>
 #include <unordered_set>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Xiaofei Hua"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -29,6 +30,21 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
+  std::set<std::string> res;
+  std::ifstream ifs(filename);
+
+  if (ifs.is_open()) {
+    std::string str;
+    while (std::getline(ifs, str)) {
+      if (str.empty()) {
+        continue;
+      }
+      res.insert(str);
+    }
+    ifs.close();
+  }
+
+  return res;
 }
 
 /**
@@ -41,6 +57,28 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+
+  std::queue<const std::string*> res;
+  auto p = name.find(' ');
+  if (p == std::string::npos || p + 1 >= name.length()) {
+    return res;
+  }
+  //assert(p != std::string::npos);
+  auto fst = name[0];
+  auto lst = name[p + 1];
+  
+  for (const auto &str : students) {
+    auto q = str.find(' ');
+    if (q == std::string::npos || q + 1 >= str.length()) {
+      continue;
+    }
+    auto f = str[0];
+    auto g = str[q + 1];
+    if (f == fst && g == lst) {
+      res.push(&str);
+    }
+  }
+  return res;
 }
 
 /**
@@ -54,6 +92,13 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  *                Will return "NO MATCHES FOUND." if `matches` is empty.
  */
 std::string get_match(std::queue<const std::string*>& matches) {
+  std::string ans;
+  if (matches.empty()) {
+    ans = "NO MATCHES FOUND.";
+  } else {
+    ans = *(matches.front());
+  }
+  return ans;
   // STUDENT TODO: Implement this function.
 }
 
